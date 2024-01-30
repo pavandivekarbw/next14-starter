@@ -15,3 +15,7 @@
     box-shadow: none;
     background-color: initial;
 }
+.custom-links {
+    text-decoration: none;
+    color: black;
+}

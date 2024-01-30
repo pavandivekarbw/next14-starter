@@ -4,30 +4,48 @@ import * as React from "react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
+import { useDispatch, useSelector } from "react-redux";
+import { push, update } from "@/redux/workspace/breadcrumbSlice";
 
-function handleClick(event) {
-    event.preventDefault();
-    console.info("You clicked a breadcrumb.");
-    console.log(event.target.text);
-}
+export default function Breadcrumb({ workspace, space }) {
+    const dispatch = useDispatch();
+    const breadcrumb = useSelector((state) => state.breadcrumb);
 
-export default function Breadcrumb() {
+    React.useEffect(() => {
+        if (!breadcrumb.length && workspace) {
+            dispatch(push(workspace));
+        }
+        if (breadcrumb.length === 1 && space) {
+            dispatch(push(space));
+        }
+    }, [workspace, space]);
+    function handleClick(event, options) {
+        event.preventDefault();
+        dispatch(update(options));
+    }
     return (
-        <div role="presentation" onClick={handleClick}>
+        <div role="presentation">
             <Breadcrumbs maxItems={2} aria-label="breadcrumb">
-                <Link underline="hover" color="inherit" href="#">
-                    Home
-                </Link>
-                <Link underline="hover" color="inherit" href="#">
-                    Catalog
-                </Link>
-                <Link underline="hover" color="inherit" href="#">
-                    Accessories
-                </Link>
-                <Link underline="hover" color="inherit" href="#">
-                    New Collection
-                </Link>
-                <Typography color="text.primary">Belts</Typography>
+                {breadcrumb.map((item, index) => {
+                    if (index === breadcrumb.length - 1) {
+                        return (
+                            <Typography color="text.primary" key={item}>
+                                {item}
+                            </Typography>
+                        );
+                    }
+                    return (
+                        <Link
+                            underline="hover"
+                            key={item}
+                            color="inherit"
+                            href="#"
+                            onClick={(e) => handleClick(e, index)}
+                        >
+                            {item}
+                        </Link>
+                    );
+                })}
             </Breadcrumbs>
         </div>
     );

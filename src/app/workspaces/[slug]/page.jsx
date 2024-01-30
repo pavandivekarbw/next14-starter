@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./spaces.module.css";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "next/link";
+import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 
 const getAPIData = async (workspaceId) => {
     const res = await fetch(
@@ -22,7 +23,12 @@ const Spaces = async ({ params, searchParams }) => {
     const data = await getAPIData(params.slug);
     return (
         <div className={styles.container}>
-            <div className={styles.breadcrumb}>breadcrumb</div>
+            <div className={styles.breadcrumb}>
+                <Breadcrumb
+                    workspace={params.slug}
+                    space={searchParams.spaceId}
+                ></Breadcrumb>
+            </div>
             <div className={styles.actionItems}>actionItems</div>
             <div className={styles.tableContainer}>
                 {!searchParams.spaceId ? (
@@ -35,7 +41,7 @@ const Spaces = async ({ params, searchParams }) => {
                                 <div className={styles.cell}>
                                     <Link
                                         href={`/workspaces/${params.slug}?spaceId=${item.spaceId}`}
-                                        className={styles.cell}
+                                        className={`${styles.cell} custom-links`}
                                     >
                                         {item.spaceName}
                                     </Link>

@@ -3,6 +3,7 @@ import styles from "./Workspaces.module.css";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "next/link";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
+import "../globals.css";
 
 const getAPIData = async () => {
     const res = await fetch(
@@ -35,7 +36,10 @@ const Workspaces = async () => {
                                 <Checkbox />
                             </div>
                             <div className={styles.cell}>
-                                <Link href={`/workspaces/${item.workspaceId}`}>
+                                <Link
+                                    href={`/workspaces/${item.workspaceId}`}
+                                    className="custom-links"
+                                >
                                     {item.workspaceName}
                                 </Link>
                             </div>
