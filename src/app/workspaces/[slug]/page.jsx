@@ -19,14 +19,47 @@ const getAPIData = async (workspaceId) => {
     const data = await res.json();
     return data;
 };
+const getSpaceData = async (spaceId, folderId) => {
+    const res = await fetch(
+        `http://localhost:3001/BW_UNITY_CENTRAL_QA/rest/spacePersistence/folderData?spaceId=${spaceId}&folderId=${
+            folderId || "0"
+        }`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization:
+                    "basic:YXNoaXNoLmJhbHVqYUBib2FyZHdhbGt0ZWNoLmNvbTowOkJvYXJkd2Fsa3RlY2h8SW50ZXJuYWx8RW5naW5lZXJpbmd8MTAyNA==",
+            },
+        }
+    );
+    const data = await res.json();
+    // return data;
+    const spaceData = [];
+    for (const key in data) {
+        if (Object.hasOwnProperty.call(data, key)) {
+            const element = data[key];
+            spaceData.push({ ...element, id: parseInt(key) });
+        }
+    }
+    return spaceData;
+};
 const Spaces = async ({ params, searchParams }) => {
     const data = await getAPIData(params.slug);
+    let spaceData = null;
+    if (searchParams.spaceId) {
+        spaceData = await getSpaceData(
+            searchParams.spaceId,
+            searchParams.folderId
+        );
+    }
     return (
         <div className={styles.container}>
             <div className={styles.breadcrumb}>
                 <Breadcrumb
                     workspace={params.slug}
                     space={searchParams.spaceId}
+                    folderId={searchParams.folderId}
                 ></Breadcrumb>
             </div>
             <div className={styles.actionItems}>actionItems</div>
@@ -61,7 +94,37 @@ const Spaces = async ({ params, searchParams }) => {
                             </div>
                         ))}
                     </div>
-                ) : null}
+                ) : (
+                    <div className={styles.table}>
+                        {spaceData.map((item) => (
+                            <div className={styles.row} key={item.id}>
+                                <div className={styles.cell}>
+                                    <Checkbox />
+                                </div>
+                                <div className={styles.cell}>
+                                    <Link
+                                        href={`/workspaces/${params.slug}?spaceId=${searchParams.spaceId}&&folderId=${item.id}`}
+                                        className={`${styles.cell} custom-links`}
+                                    >
+                                        {item.objectName}
+                                    </Link>
+                                </div>
+                                <div className={styles.cell}>
+                                    {item.isStarred}
+                                </div>
+                                <div className={styles.cell}>
+                                    {item.isShared}
+                                </div>
+                                <div className={styles.cell}>
+                                    {item.createdOn}
+                                </div>
+                                <div className={styles.cell}>
+                                    {item.updatedOn}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

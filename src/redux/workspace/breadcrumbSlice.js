@@ -12,11 +12,14 @@ const breadcrumbSlice = createSlice({
         pop: (state) => {
             state.pop();
         },
+        replace: (state, action) => {
+            state.splice(0, state.length, ...action.payload);
+        },
         update: (state, action) => {
             state.splice(action.payload + 1);
         },
     },
 });
 
-export const { push, pop, update } = breadcrumbSlice.actions;
+export const { push, pop, replace, update } = breadcrumbSlice.actions;
 export default breadcrumbSlice.reducer;
